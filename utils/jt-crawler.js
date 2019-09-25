@@ -1,12 +1,19 @@
 const cheerio = require('cheerio')
 const axios = require('axios')
-
-const baseUrl = 'http://zjddjt.com/product'
+const {getUrlParam} = require('./http')
 
 /**
  * 爬取产品展示信息
+ * @param: baseUrl http://zjddjt.com/product
+ * @return: object
+ *
+ *  {
+ *    ok: Number,    1 / 0 网络请求是否成功
+ *    data: object   加梯产品展示数据
+ *  }
  */
-async function getProductDisplayInfo() {
+async function getProductDisplayInfo(baseUrl = 'http://zjddjt.com/product') {
+
 	const r = await axios.get(`${baseUrl}/class/index.php?page=1`)
 
 	if (!r || r.status !== 200) {
@@ -96,23 +103,6 @@ async function getDetail(url) {
 	return {name, img, area, desc}
 }
 
-/**
- * 根据 param 获取 url 中查询字符串值
- */
-function getUrlParam(url, param) {
-	const reg = new RegExp(`(^|&)${param}=([^&]*)`)
-	const r = url.split('?')[1].match(reg)
-
-	if ( r ) {
-		return decodeURIComponent(r[2])
-	}
+module.exports = {
+	getProductDisplayInfo
 }
-
-getProductDisplayInfo()
-	.then(r => {
-		r.ok ?
-			console.log(JSON.stringify(r.data, null, 2))
-			:
-			console.log('NO DATA!')
-	})
-	.catch(e => console.error(e))
