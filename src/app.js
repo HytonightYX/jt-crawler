@@ -1,12 +1,10 @@
 const cheerio = require('cheerio')
 const axios = require('axios')
-const schedule = require('node-schedule')
 
 const baseUrl = 'http://zjddjt.com/product'
 
 /**
  * 爬取产品展示信息
- * @returns {Promise<{data: null, ok: number}|{data: Array, ok: number}>}
  */
 async function getProductDisplayInfo() {
 	const r = await axios.get(`${baseUrl}/class/index.php?page=1`)
@@ -109,23 +107,6 @@ function getUrlParam(url, param) {
 		return decodeURIComponent(r[2])
 	}
 }
-
-// executed every 2 hours
-let rule = new schedule.RecurrenceRule()
-rule.hour = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]
-rule.minute = 0
-
-// prod env
-// schedule.scheduleJob(rule, () => {
-// 	getProductDisplayInfo()
-// 		.then(r => {
-// 			r.ok ?
-// 				console.log(r.data)
-// 				:
-// 				console.log('NO DATA!')
-// 		})
-// 		.catch(e => console.error(e.message))
-// })
 
 getProductDisplayInfo()
 	.then(r => {
